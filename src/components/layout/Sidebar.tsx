@@ -12,6 +12,7 @@ import {
   Search,
   Command,
   ChevronDown,
+  ChevronLeft,
   Sparkles
 } from 'lucide-react'
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -26,6 +27,8 @@ import { cn } from '@/utils/cn'
 interface SidebarProps {
   activeTab: 'dashboard' | 'files'
   onTabChange: (tab: 'dashboard' | 'files') => void
+  isCollapsed: boolean
+  onToggleCollapse: () => void
 }
 
 // ─── Folder Sub-item ────────────────────────────────────────────────────────
@@ -122,7 +125,7 @@ PromoCard.displayName = 'PromoCard'
 
 // ─── Sidebar Component ─────────────────────────────────────────────────────
 
-export const Sidebar = memo(({ activeTab, onTabChange }: SidebarProps) => {
+export const Sidebar = memo(({ activeTab, onTabChange, isCollapsed, onToggleCollapse }: SidebarProps) => {
   const {
     filters,
     setFolder,
@@ -171,20 +174,29 @@ export const Sidebar = memo(({ activeTab, onTabChange }: SidebarProps) => {
   return (
     <aside
       className={cn(
-        'flex flex-col shrink-0 p-4.5 pb-12 gap-4 h-full overflow-y-auto overflow-x-hidden',
+        'flex flex-col shrink-0 gap-4 h-full overflow-y-auto overflow-x-hidden transition-all duration-350 ease-in-out',
         'border-r border-white/50 bg-white/45 backdrop-blur-xl shadow-sm',
         'dark:border-white/5 dark:bg-[#0B1521]/70',
+        isCollapsed ? 'w-0 p-0 border-r-0 opacity-0 pointer-events-none' : 'w-[240px] p-4.5 pb-12 opacity-100'
       )}
-      style={{ width: 'var(--sidebar-w)' }}
     >
-      {/* Brand Header inside Sidebar matching Sample 1 */}
-      <div className="flex items-center gap-2.5 pl-1.5 py-1">
-        <div className="w-7 h-7 rounded-lg bg-brandNavy dark:bg-white/10 flex items-center justify-center text-sm text-[#83E9FF] font-bold select-none shadow-sm">
-          ☁
+      {/* Brand Header inside Sidebar with collapse trigger */}
+      <div className="flex items-center justify-between pl-1.5 py-1">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-brandNavy dark:bg-white/10 flex items-center justify-center text-sm text-[#83E9FF] font-bold select-none shadow-sm">
+            ☁
+          </div>
+          <span className="font-display font-bold text-sm text-brandNavy dark:text-white tracking-tight">
+            CloudStore AI
+          </span>
         </div>
-        <span className="font-display font-bold text-sm text-brandNavy dark:text-white tracking-tight">
-          CloudStore AI
-        </span>
+        <button
+          onClick={onToggleCollapse}
+          className="p-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 text-brandNavy/60 dark:text-slate-400 hover:text-brandNavy dark:hover:text-white transition-colors cursor-pointer"
+          aria-label="Collapse Sidebar"
+        >
+          <ChevronLeft size={14} />
+        </button>
       </div>
 
       {/* Glass Search Input inside Sidebar matching Sample 1 */}
